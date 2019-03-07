@@ -139,16 +139,16 @@ class ObjectRender{
 	 */
 	protected $_renders=[];
 	public function __construct(){
-	    $this->_format=$this->_first_accept();
+	    $this->_format=$this->_firstAccept();
 	    if ($this->_format!=self::FORMAT_HTML) {
-	        $this->set_format($this->_format);
+	        $this->setFormat($this->_format);
 	    }
 	}
 	/**
 	 * 优先接受选择
 	 * @return string
 	 */
-	protected function _first_accept(){
+	protected function _firstAccept(){
 	    $accepts=array(
 	        self::FORMAT_HTML=>'text/html,application/xhtml+xml',
 	        self::FORMAT_XML=>'text/xml,application/xml',
@@ -175,7 +175,7 @@ class ObjectRender{
 	 * @param mixed $render
 	 * @return $this
 	 */
-	public function set_render(Render $render,$support_class=null){
+	public function setRender(Render $render,$support_class=null){
 		$this->_renders[$support_class]=$render;
 		return $this;
 	}
@@ -184,11 +184,11 @@ class ObjectRender{
 	 * @param string $support_class
 	 * @return $this
 	 */
-	public function set_render_support(RenderSupport $render_support){
-	    $support_class=$render_support->support_class();
+	public function setRenderSupport(RenderSupport $render_support){
+	    $support_class=$render_support->supportClass();
 	    $support_class=is_array($support_class)?$support_class:[$support_class];
 	    foreach ($support_class as $_support_class){
-	        $this->set_render($render_support,$_support_class);
+	        $this->setRender($render_support,$_support_class);
 	    }
 	    return $this;
 	}
@@ -197,7 +197,7 @@ class ObjectRender{
 	 * @param array
 	 * @return $this
 	 */
-	public function set_format($format){
+	public function setFormat($format){
 		$this->_format=$format;
 		switch ($format){
 		    case self::FORMAT_JSON:
@@ -222,33 +222,33 @@ class ObjectRender{
 	 * 获取已设置的输出格式
 	 * @return string
 	 */
-	public function get_format(){
+	public function getFormat(){
 		return $this->_format;
 	}
 	/**
 	 * 获取已设置HTTP状态码
 	 * @return int
 	 */
-	public function get_http_code(){
-	    return $this->_render instanceof RenderHttpCode?$this->_render->get_http_code($this->_format,$this->_body):null;
+	public function getHttpCode(){
+	    return $this->_render instanceof RenderHttpCode?$this->_render->getHttpCode($this->_format,$this->_body):null;
 	}
 	/**
 	 * 设置渲染对象
 	 * @param object $body
 	 * @return $this
 	 */
-	public function set_object($object){
+	public function setObject($object){
 	    assert(is_object($object));
-	    $this->_render=$this->_find_render($object);
+	    $this->_render=$this->_findRender($object);
 	    $this->_body=$object;
 		return $this;
 	}
 	/**
 	 * 获取已设置的HEADER
 	 */
-	public function get_header($join=false){
+	public function getHeader($join=false){
 	    if (!$this->_render instanceof RenderHeader)return [];
-	    $header=$this->_render->get_header($this->_format, $this->_body);
+	    $header=$this->_render->getHeader($this->_format, $this->_body);
 	    $header=is_array($header)?$header+$this->_header:$this->_header;
 	    if (!$join)return $header;
 	    $_header=array();
@@ -263,16 +263,16 @@ class ObjectRender{
 	}
 	public function __toString(){
 	    try{
-			if(!headers_sent())foreach ($this->get_header(true) as $v){
+			if(!headers_sent())foreach ($this->getHeader(true) as $v){
 	            @header($v);
 	        }
-	        $this->get_http_code()&&@http_response_code($this->get_http_code());
+	        $this->getHttpCode()&&@http_response_code($this->getHttpCode());
 	       return $this->render();
 	    }catch (\Exception $e){
 	       return Exception::entext($e);
 	    }
 	}
-	protected function _sort_render(){
+	protected function _sortRender(){
 		$t=$this->_renders;
 		unset($t['']);
 		$t=array_keys($t);
@@ -311,8 +311,8 @@ class ObjectRender{
 	 * 渲染按指定格式渲染输出
 	 * @return Render
 	 */
-	protected function _find_render($body){
-		$renders=$this->_sort_render();
+	protected function _findRender($body){
+		$renders=$this->_sortRender();
 		foreach ($renders as $k=>$v){
 		    if (is_a($body,$k)){
 				$render=$v;
@@ -323,13 +323,13 @@ class ObjectRender{
 		    if ((version_compare(PHP_VERSION,"7",">")&&$body instanceof \Throwable)
 		        ||$body instanceof \Exception){
 				$render=new Exception();
-				foreach ((array)$render->support_class() as $class){
-					$this->set_render($render,$class);
+				foreach ((array)$render->supportClass() as $class){
+					$this->setRender($render,$class);
 				}
 			}else{
 				if (!isset($this->_renders[''])){
 					$render=new Simple;
-					$this->set_render($render);
+					$this->setRender($render);
 				}else $render=$this->_renders[''];
 			}
 		}

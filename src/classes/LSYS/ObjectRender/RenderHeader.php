@@ -12,5 +12,5 @@ interface RenderHeader{
 	 * @param string $format
 	 * @param object $body
 	 */
-    public function get_header($format,$body);
+    public function getHeader($format,$body);
 }

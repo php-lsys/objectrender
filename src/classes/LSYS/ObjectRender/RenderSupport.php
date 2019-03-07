@@ -11,5 +11,5 @@ interface RenderSupport extends Render{
 	 * 返回支持类名,多个类返回数组
 	 * @return string|array
 	 */
-	public function support_class();
+	public function supportClass();
 }

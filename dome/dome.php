@@ -12,13 +12,13 @@ class outbb implements RenderSupport,RenderHeader,RenderHttpCode{
     public static function factory(){
         return new static();
     }
-    public function support_class(){
+    public function supportClass(){
         return bb::class;
     }
-    public function get_http_code($format,$body){
+    public function getHttpCode($format,$body){
         return 404;
     }
-    public function get_header($format,$body){
+    public function getHeader($format,$body){
         return [
             'x'=>'sss'
         ];
@@ -35,6 +35,6 @@ class outbb implements RenderSupport,RenderHeader,RenderHttpCode{
     }
 }
 
-$objrender=DI::get()->object_render();
-$objrender->set_render_support(new outbb());
-echo $objrender->set_format(ObjectRender::FORMAT_JSON)->set_object(new HTTP400Exception(null,new Exception("afsdfa",1)));
+$objrender=DI::get()->objectRender();
+$objrender->setRenderSupport(new outbb());
+echo $objrender->setFormat(ObjectRender::FORMAT_JSON)->setObject(new HTTP400Exception(null,new Exception("afsdfa",1)));

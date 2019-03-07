@@ -19,7 +19,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 	/**
 	 * @return string
 	 */
-	public function support_class(){
+	public function supportClass(){
 		if (version_compare(PHP_VERSION,"7",">"))return \Throwable::class;
 		else return \Exception::class;
 	}
@@ -29,7 +29,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 	 * @param mixed $body
 	 * @return array
 	 */
-	public function get_header($format,$body){
+	public function getHeader($format,$body){
 		switch ($format){
 			//JSON输出时 http状态码强制为200
 			case ObjectRender::FORMAT_JSON:
@@ -42,7 +42,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 				}else return [];
 		}
 	}
-	public function get_http_code($format,$body){
+	public function getHttpCode($format,$body){
 	    switch ($format){
 	        //JSON输出时 http状态码强制为200
 	        case ObjectRender::FORMAT_JSON:
@@ -89,7 +89,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 		else assert($e instanceof \Exception);
 		if ($e instanceof HTTPException){
 			$render=$e->getRender();
-			if($render instanceof RenderHTML) return $render->to_html();
+			if($render instanceof RenderHTML) return $render->toHtml();
 		}
 		if ($message==null)$title=$e->getMessage();
 		else $title=$message;
@@ -194,7 +194,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 		$type=strtolower(str_replace("\\", "-", get_class($e)));
 		if ($e instanceof HTTPException){
 			$render=$e->getRender();
-			if($render instanceof RenderArray) return $render->to_array();
+			if($render instanceof RenderArray) return $render->toArray();
 			$json=array(
 				'status'=>false,
 			    'type'=>$type,

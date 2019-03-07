@@ -12,5 +12,5 @@ interface RenderHttpCode{
      * @param string $format
      * @param object $body
      */
-    public function get_http_code($format,$body);
+    public function getHttpCode($format,$body);
 }

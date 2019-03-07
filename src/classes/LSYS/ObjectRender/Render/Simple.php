@@ -16,20 +16,20 @@ class Simple implements Render{
 	public function format($format,$body){
 		switch ($format){
 			case ObjectRender::FORMAT_JSON:
-			    $body=self::_no_scalar_str($body);
+			    $body=self::_noScalarStr($body);
 			    return ObjectRender::enjson($body);
 			case ObjectRender::FORMAT_JSONP:
-			    $body=self::_no_scalar_str($body);
+			    $body=self::_noScalarStr($body);
 			    return ObjectRender::enjsonp($body);
 			case ObjectRender::FORMAT_HTML:
-				return self::_no_scalar_str($body);
+				return self::_noScalarStr($body);
 			break;
 			case ObjectRender::FORMAT_XML:
-			    $body=self::_no_scalar_str($body);
+			    $body=self::_noScalarStr($body);
 			    return ObjectRender::enxml($body);
 			break;
 			case ObjectRender::FORMAT_TEXT:
-			    return strip_tags(self::_no_scalar_str($body));
+			    return strip_tags(self::_noScalarStr($body));
 			break;
 			default: return NULL;
 		}
@@ -39,7 +39,7 @@ class Simple implements Render{
 	 * @param mixed $no_scalar_var
 	 * @return string
 	 */
-	private static function _no_scalar_str($no_scalar_var){
+	private static function _noScalarStr($no_scalar_var){
 	    ob_start();
 	    print_r($no_scalar_var);
 	    return ob_get_clean();
