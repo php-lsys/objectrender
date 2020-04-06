@@ -10,8 +10,8 @@
 		"files": ["src/Bootstarp.php"]
     },
     "require": {
-     	"lsys/core":"~0.0.0",
-     	"lsys/i18n":"~0.0.0",
-     	"lsys/httpexception" : "~0.0.0"
+     	"lsys/core":"~0.0.1",
+     	"lsys/i18n":"~0.0.1",
+     	"lsys/httpexception" : "~0.0.1"
 	}
 }
