@@ -11,6 +11,7 @@ interface RenderHttpCode{
      * 指定内容输出时的HTTP状态码
      * @param string $format
      * @param object $body
+     * @return int
      */
-    public function getHttpCode($format,$body);
+    public function getHttpCode(string $format,$body):int;
 }

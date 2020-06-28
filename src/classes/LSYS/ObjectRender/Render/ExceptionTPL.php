@@ -190,6 +190,16 @@ function koggle(elem)
 	return false;
 }
 </script>
+<?php 
+/**
+ * @var int $code
+ * @var int $line
+ * @var string $file
+ * @var string $class
+ * @var string $message
+ * @var array $trace
+ */
+?>
 <div id="lfw_error">
 	<h1><span class="type"><?php echo $class ?> [ <?php echo $code ?> ]:</span> <span class="message"><?php echo $message; ?></span></h1>
 	<div id="<?php echo $error_id ?>" class="errcontent">
@@ -259,7 +269,7 @@ function koggle(elem)
 			<table>
 				<?php foreach ($GLOBALS[$var] as $key => $value): ?>
 				<tr>
-					<td class="bcent"><code><?php echo htmlspecialchars( (string) $key, ENT_QUOTES, Core::$charset, TRUE); ?></code></td>
+					<td class="bcent"><code><?php echo htmlspecialchars( (string) $key, ENT_QUOTES, Core::charset(), TRUE); ?></code></td>
 					<td><pre><?php echo Exception::dump($value) ?></pre></td>
 				</tr>
 				<?php endforeach ?>

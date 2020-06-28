@@ -13,7 +13,7 @@ class Simple implements Render{
 	 * {@inheritDoc}
 	 * @see \LSYS\ObjectRender\Render::format()
 	 */
-	public function format($format,$body){
+    public function format(string $format,$body){
 		switch ($format){
 			case ObjectRender::FORMAT_JSON:
 			    $body=self::_noScalarStr($body);
@@ -39,7 +39,7 @@ class Simple implements Render{
 	 * @param mixed $no_scalar_var
 	 * @return string
 	 */
-	private static function _noScalarStr($no_scalar_var){
+	private static function _noScalarStr($no_scalar_var):string{
 	    ob_start();
 	    print_r($no_scalar_var);
 	    return ob_get_clean();

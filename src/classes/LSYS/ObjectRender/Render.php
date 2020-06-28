@@ -13,5 +13,5 @@ interface Render{
 	 * @param object $body
 	 * @return string|resource
 	 */
-	public function format($format,$body);
+	public function format(string $format,$body);
 }

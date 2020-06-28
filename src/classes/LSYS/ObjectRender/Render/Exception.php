@@ -29,7 +29,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 	 * @param mixed $body
 	 * @return array
 	 */
-	public function getHeader($format,$body){
+	public function getHeader(string $format,$body):array{
 		switch ($format){
 			//JSON输出时 http状态码强制为200
 			case ObjectRender::FORMAT_JSON:
@@ -42,7 +42,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 				}else return [];
 		}
 	}
-	public function getHttpCode($format,$body){
+	public function getHttpCode(string $format,$body):int{
 	    switch ($format){
 	        //JSON输出时 http状态码强制为200
 	        case ObjectRender::FORMAT_JSON:
@@ -58,7 +58,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 	 * {@inheritDoc}
 	 * @see \LSYS\ObjectRender\Render::format()
 	 */
-	public function format($format,$body){
+	public function format(string $format,$body){
 		switch ($format){
 			case ObjectRender::FORMAT_HTML:
 				return static::enhtmlpage($body);
@@ -84,7 +84,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 	 * @param \Exception $e
 	 * @return string
 	 */
-	public static function enhtmlpage($e,$message=null){
+	public static function enhtmlpage($e,$message=null):string{
 		if (version_compare(PHP_VERSION,"7",">"))assert($e instanceof \Throwable);
 		else assert($e instanceof \Exception);
 		if ($e instanceof HTTPException){
@@ -94,7 +94,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 		if ($message==null)$title=$e->getMessage();
 		else $title=$message;
 		$title=htmlspecialchars($title);
-		if (\LSYS\Core::$environment===\LSYS\Core::PRODUCT){
+		if (\LSYS\Core::envIs(\LSYS\Core::PRODUCT)){
 		    $assets=null;
 		    $body=static::enhtml($e,$message,self::ENHTML_RENDER_SIMPLE);
 		}else{
@@ -102,29 +102,37 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 		    $body=static::enhtml($e,$message,self::ENHTML_RENDER_FULL);
 		    $body.=static::enhtmlenv();
 		}
-		$charset=\LSYS\Core::$charset;
+		$charset=\LSYS\Core::charset();
 		ob_start();
 		include __DIR__."/ExceptionTPLPage.php";
 		return ob_get_clean();
 	}
-	public static function enhtmlassets(){
+	public static function enhtmlassets():string{
 	    ob_start();
         include __DIR__."/ExceptionTPLAssets.php";
 	    return ob_get_clean();
 	}
-	public static function enhtmlenv(){
+	public static function enhtmlenv():string{
 	    ob_start();
         include __DIR__."/ExceptionTPLEnv.php";
 	    return ob_get_clean();
 	}
+	/**
+	 * 渲染完整错误信息输出
+	 * @var integer
+	 */
     const ENHTML_RENDER_FULL=1;
+    /**
+     * 渲染简单信息数据
+     * @var integer
+     */
     const ENHTML_RENDER_SIMPLE=2;
 	/**
 	 * 把异常转为HTML字符串
 	 * @param \Exception $e
 	 * @return string
 	 */
-    public static function enhtml($e,$message=null,$render=self::ENHTML_RENDER_FULL){
+    public static function enhtml($e,$message=null,$render=self::ENHTML_RENDER_FULL):string{
 		if (version_compare(PHP_VERSION,"7",">"))assert($e instanceof \Throwable);
 		else assert($e instanceof \Exception);
 		if ($message==null) $message = $e->getMessage();
@@ -175,7 +183,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 				}
 			}
 		}
-		$message=htmlspecialchars( (string) $message, ENT_QUOTES | ENT_IGNORE, Core::$charset, TRUE);
+		$message=htmlspecialchars( (string) $message, ENT_QUOTES | ENT_IGNORE, Core::charset(), TRUE);
 		$message=trim($message,"\n");
 		$message=str_replace(array("\n"),"<br>",$message);
 		// Capture the view output
@@ -188,7 +196,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 	 * @param \Exception $e
 	 * @return array
 	 */
-	public static function enarray($e){
+	public static function enarray($e):array{
 		if (version_compare(PHP_VERSION,"7",">"))assert($e instanceof \Throwable);
 		else assert($e instanceof \Exception);
 		$type=strtolower(str_replace("\\", "-", get_class($e)));
@@ -210,7 +218,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 				'code'=>$e->getCode(),
 			);
 		}	
-		if (Core::$environment!==Core::PRODUCT){
+		if (!Core::envIs(Core::PRODUCT)){
 			$json['file'] = $e->getFile();
 			$json['line'] = $e->getLine();
 			$json['stack-trace'] = explode("\n", $e->getTraceAsString());
@@ -231,7 +239,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 	 * @param \Exception $e
 	 * @return string
 	 */
-	public static function entext($e)
+	public static function entext($e):string
 	{
 		if (version_compare(PHP_VERSION,"7",">"))assert($e instanceof \Throwable);
 		else assert($e instanceof \Exception);
@@ -261,7 +269,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 	 * @param   integer $level  current recursion level (internal usage only!)
 	 * @return  string
 	 */
-	private static function _dump( & $var, $length = 128, $limit = 10, $level = 0)
+	private static function _dump( & $var, int $length = 128, int $limit = 10,int $level = 0):string
 	{
 		if ($var === NULL)
 		{
@@ -283,7 +291,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 				if (isset($meta['uri']))
 				{
 					$file = $meta['uri'];
-					return '<small>resource</small><span>('.$type.')</span> '.htmlspecialchars($file, ENT_NOQUOTES, Core::$charset);
+					return '<small>resource</small><span>('.$type.')</span> '.htmlspecialchars($file, ENT_NOQUOTES, Core::charset());
 				}
 			}
 			else
@@ -299,12 +307,12 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 			if (mb_strlen($var) > $length)
 			{
 				// Encode the truncated string
-				$str = htmlspecialchars(mb_substr($var, 0, $length), ENT_NOQUOTES, Core::$charset).'&nbsp;&hellip;';
+			    $str = htmlspecialchars(mb_substr($var, 0, $length), ENT_NOQUOTES, Core::charset()).'&nbsp;&hellip;';
 			}
 			else
 			{
 				// Encode the string
-				$str = htmlspecialchars($var, ENT_NOQUOTES, Core::$charset);
+				$str = htmlspecialchars($var, ENT_NOQUOTES, Core::charset());
 			}
 			return '<small>string</small><span>('.strlen($var).')</span> "'.$str.'"';
 		}
@@ -336,7 +344,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 					if ($key === $marker) continue;
 					if ( ! is_int($key))
 					{
-						$key = '"'.htmlspecialchars($key, ENT_NOQUOTES, Core::$charset).'"';
+						$key = '"'.htmlspecialchars($key, ENT_NOQUOTES, Core::charset()).'"';
 					}
 					$output[] = "$space$s$key => ".self::_dump($val, $length, $limit, $level + 1);
 				}
@@ -399,7 +407,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 		}
 		else
 		{
-			return '<small>'.gettype($var).'</small> '.htmlspecialchars(print_r($var, TRUE), ENT_NOQUOTES, Core::$charset);
+			return '<small>'.gettype($var).'</small> '.htmlspecialchars(print_r($var, TRUE), ENT_NOQUOTES, Core::charset());
 		}
 	}
 	/**
@@ -415,7 +423,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 	 * @return  string   source of file
 	 * @return  FALSE    file is unreadable
 	 */
-	protected static function source($file, $line_number, $padding = 5)
+	protected static function source(string $file,int $line_number,int $padding = 5)
 	{
 		if ( ! $file OR ! is_readable($file))
 		{
@@ -438,7 +446,7 @@ class Exception implements Render,RenderHeader,RenderHttpCode,RenderSupport{
 				if ($line >= $range['start'])
 				{
 					// Make the row safe for output
-					$row = htmlspecialchars($row, ENT_NOQUOTES, Core::$charset);
+					$row = htmlspecialchars($row, ENT_NOQUOTES, Core::charset());
 					// Trim whitespace and sanitize the row
 					$row = '<span class="number">'.sprintf($format, $line).'</span> '.$row;
 					if ($line === $line_number)

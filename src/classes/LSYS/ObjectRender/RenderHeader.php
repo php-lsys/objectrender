@@ -11,6 +11,7 @@ interface RenderHeader{
 	 * 渲染指定内容时,设置需要输出HEADER
 	 * @param string $format
 	 * @param object $body
+	 * @return array
 	 */
-    public function getHeader($format,$body);
+    public function getHeader(string $format,$body):array;
 }

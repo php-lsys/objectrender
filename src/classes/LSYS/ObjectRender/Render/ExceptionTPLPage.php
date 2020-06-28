@@ -2,6 +2,10 @@
 /**
  * @author     Lonely <shan.liu@msn.com>
  * @copyright  (c) 2017 Lonely <shan.liu@msn.com>
+ * @var string $title
+ * @var string $assets
+ * @var string $charset
+ * @var string $body
  */
 ?>
 <!DOCTYPE HTML>

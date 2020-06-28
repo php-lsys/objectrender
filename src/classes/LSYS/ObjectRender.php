@@ -28,7 +28,7 @@ class ObjectRender{
      * @param mixed $data
      * @return string
      */
-    public static function enjson($data){
+    public static function enjson($data):string{
         return json_encode($data,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
     }
     /**
@@ -36,7 +36,7 @@ class ObjectRender{
      * @param mixed $data
      * @return string
      */
-    public static function enjsonp($data){
+    public static function enjsonp($data):string{
         $data=self::enjson($data);
         $str=isset($_REQUEST[self::$jsonp_key])?$_REQUEST[self::$jsonp_key]:'';
         $str=str_replace(array("\n","\s","'",'"','`','(',')','[',']','{','}','#','!','$','?'),"", strip_tags($str));
@@ -47,10 +47,10 @@ class ObjectRender{
      * @param mixed $data
      * @return string
      */
-    public static function enxml($data){
+    public static function enxml($data):string{
         $xml = new \XmlWriter();
         $xml->openMemory();
-        $xml->startDocument('1.0', Core::$charset);
+        $xml->startDocument('1.0', Core::charset());
         if (is_array($data)){
             $xml->startElement(self::$xml_root);
             self::_arrtoxml($xml,$data);
@@ -148,7 +148,7 @@ class ObjectRender{
 	 * 优先接受选择
 	 * @return string
 	 */
-	protected function _firstAccept(){
+	protected function _firstAccept():string{
 	    $accepts=array(
 	        self::FORMAT_HTML=>'text/html,application/xhtml+xml',
 	        self::FORMAT_XML=>'text/xml,application/xml',
@@ -175,7 +175,7 @@ class ObjectRender{
 	 * @param mixed $render
 	 * @return $this
 	 */
-	public function setRender(Render $render,$support_class=null){
+	public function setRender(Render $render,?string $support_class=null){
 		$this->_renders[$support_class]=$render;
 		return $this;
 	}
@@ -197,23 +197,23 @@ class ObjectRender{
 	 * @param array
 	 * @return $this
 	 */
-	public function setFormat($format){
+	public function setFormat(string $format){
 		$this->_format=$format;
 		switch ($format){
 		    case self::FORMAT_JSON:
-		        $this->_header["Content-Type"]="application/json;charset=".Core::$charset;
+		        $this->_header["Content-Type"]="application/json;charset=".Core::charset();
 		        break;
 		    case self::FORMAT_JSONP:
-		        $this->_header["Content-Type"]="application/x-javascript;charset=".Core::$charset;
+		        $this->_header["Content-Type"]="application/x-javascript;charset=".Core::charset();
 		        break;
 		    case self::FORMAT_TEXT:
-		        $this->_header["Content-Type"]="text/plain;charset=".Core::$charset;
+		        $this->_header["Content-Type"]="text/plain;charset=".Core::charset();
 		        break;
 		    case self::FORMAT_XML:
-		        $this->_header["Content-Type"]="application/xml;charset=".Core::$charset;
+		        $this->_header["Content-Type"]="application/xml;charset=".Core::charset();
 		        break;
 		    case self::FORMAT_HTML:
-		        $this->_header["Content-Type"]="text/html;charset=".Core::$charset;
+		        $this->_header["Content-Type"]="text/html;charset=".Core::charset();
 		        break;
 		}
 		return $this;
@@ -222,14 +222,14 @@ class ObjectRender{
 	 * 获取已设置的输出格式
 	 * @return string
 	 */
-	public function getFormat(){
+	public function getFormat():string{
 		return $this->_format;
 	}
 	/**
 	 * 获取已设置HTTP状态码
 	 * @return int
 	 */
-	public function getHttpCode(){
+	public function getHttpCode():?int{
 	    return $this->_render instanceof RenderHttpCode?$this->_render->getHttpCode($this->_format,$this->_body):null;
 	}
 	/**
@@ -237,7 +237,7 @@ class ObjectRender{
 	 * @param object $body
 	 * @return $this
 	 */
-	public function setObject($object){
+	public function setObject(object $object){
 	    assert(is_object($object));
 	    $this->_render=$this->_findRender($object);
 	    $this->_body=$object;
@@ -246,7 +246,7 @@ class ObjectRender{
 	/**
 	 * 获取已设置的HEADER
 	 */
-	public function getHeader($join=false){
+	public function getHeader(bool $join=false){
 	    if (!$this->_render instanceof RenderHeader)return [];
 	    $header=$this->_render->getHeader($this->_format, $this->_body);
 	    $header=is_array($header)?$header+$this->_header:$this->_header;
@@ -257,6 +257,10 @@ class ObjectRender{
 	    }
 	    return $_header;
 	}
+	/**
+	 * 渲染
+	 * @return string|resource
+	 */
 	public function render(){
 	    if (!$this->_render)return '';
 	    return $this->_render->format($this->_format, $this->_body);
@@ -267,11 +271,15 @@ class ObjectRender{
 	            @header($v);
 	        }
 	        $this->getHttpCode()&&@http_response_code($this->getHttpCode());
-	       return $this->render();
+            return strval($this->render());
 	    }catch (\Exception $e){
 	       return Exception::entext($e);
 	    }
 	}
+	/**
+	 * 渲染器对象排序
+	 * @return \LSYS\ObjectRender\Render[]
+	 */
 	protected function _sortRender(){
 		$t=$this->_renders;
 		unset($t['']);

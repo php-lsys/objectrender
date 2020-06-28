@@ -2,6 +2,12 @@
 /**
  * @author     Lonely <shan.liu@msn.com>
  * @copyright  (c) 2017 Lonely <shan.liu@msn.com>
+ * @var int $code
+ * @var int $line
+ * @var string $file
+ * @var string $class
+ * @var string $message
+ * @var array $trace
  */
 ?>
 <?php

@@ -41,7 +41,7 @@ $error_id = uniqid ( 'error_env' );
 			<table>
 				<?php foreach ($GLOBALS[$var] as $key => $value): ?>
 				<tr>
-					<td class="bcent"><code><?php echo htmlspecialchars( (string) $key, ENT_QUOTES, Core::$charset, TRUE); ?></code></td>
+					<td class="bcent"><code><?php echo htmlspecialchars( (string) $key, ENT_QUOTES, Core::charset(), TRUE); ?></code></td>
 					<td><pre><?php echo Exception::dump($value) ?></pre></td>
 				</tr>
 				<?php endforeach ?>

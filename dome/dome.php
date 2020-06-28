@@ -15,15 +15,15 @@ class outbb implements RenderSupport,RenderHeader,RenderHttpCode{
     public function supportClass(){
         return bb::class;
     }
-    public function getHttpCode($format,$body){
+    public function getHttpCode(string $format,$body):int{
         return 404;
     }
-    public function getHeader($format,$body){
+    public function getHeader(string $format,$body):array{
         return [
             'x'=>'sss'
         ];
     }
-    public function format($format, $body){
+    public function format(string $format, $body){
         switch ($format){
             case ObjectRender::FORMAT_XML:
                 return '<root></root>';
